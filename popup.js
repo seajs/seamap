@@ -1,5 +1,6 @@
 function readSeajsCacheToBody() {
   $('#canvas').html('');
+  $('#base').html('');
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     var tab = tabs[0];
     chrome.tabs.sendMessage(tab.id,{
@@ -9,24 +10,27 @@ function readSeajsCacheToBody() {
         var data = JSON.parse(response.data);
         console.log(data);
         render(data);
+        $('#base').html('base: ' + data.base);
       }
       else {
-        //
+        $('#canvas').html('<p>没有模块内容</p>');
       }
     });
   });
 }
 
 var width = 720;
-var height = 540;
+var height = 80;
 /* only do all this when document has finished loading (needed for RaphaelJS) */
 function render(data) {
   var g = new Graph();
   var cache = data.cache;
+  var count = 0;
   Object.keys(cache).forEach(function(k) {
     var dir = dirname(k);
     var base = basename(k);
     g.addNode(k, { label: relative(dir, data.base) + '/' + base });
+    count++;
   });
   Object.keys(cache).forEach(function(k) {
     var node = cache[k];
@@ -38,7 +42,7 @@ function render(data) {
   var layouter = new Graph.Layout.Spring(g);
   layouter.layout();
   /* draw the graph using the RaphaelJS draw implementation */
-  var renderer = new Graph.Renderer.Raphael('canvas', g, width, height);
+  var renderer = new Graph.Renderer.Raphael('canvas', g, width, Math.round(height * Math.max(4, (count / 4))));
   renderer.draw();
 };
 
