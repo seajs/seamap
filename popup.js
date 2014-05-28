@@ -29,7 +29,14 @@ function render(data) {
   Object.keys(cache).forEach(function(k) {
     var dir = dirname(k);
     var base = basename(k);
-    g.addNode(k, { label: relative(dir, data.base) + '/' + base });
+    var s = relative(dir, data.base);
+    if(s) {
+      s += '/' + base;
+    }
+    else {
+      s = base;
+    }
+    g.addNode(k, { label: s });
     count++;
   });
   Object.keys(cache).forEach(function(k) {

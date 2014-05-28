@@ -19,11 +19,6 @@
 
   "permissions": [
     "tabs",
-    "cookies",
-    "notifications",
-    "webRequest",
-    "webRequestBlocking",
-    "unlimitedStorage",
     "<all_urls>"
   ],
 
