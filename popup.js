@@ -24,7 +24,9 @@ function render(data) {
   var g = new Graph();
   var cache = data.cache;
   Object.keys(cache).forEach(function(k) {
-    g.addNode(k, { label: k });
+    var dir = dirname(k);
+    var base = basename(k);
+    g.addNode(k, { label: relative(dir, data.base) + '/' + base });
   });
   Object.keys(cache).forEach(function(k) {
     var node = cache[k];
@@ -42,3 +44,82 @@ function render(data) {
 
 readSeajsCacheToBody();
 $('button').click(readSeajsCacheToBody);
+
+
+// https://github.com/joyent/node/blob/master/lib/path.js#L310
+var splitPathRe =
+  /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
+var splitPath = function(filename) {
+  return splitPathRe.exec(filename).slice(1);
+};
+
+// https://github.com/joyent/node/blob/master/lib/path.js#L400
+function relative(from, to) {
+//  from = exports.resolve(from).substr(1);
+//  to = exports.resolve(to).substr(1);
+
+  function trim(arr) {
+    var start = 0;
+    for (; start < arr.length; start++) {
+      if (arr[start] !== '') break;
+    }
+
+    var end = arr.length - 1;
+    for (; end >= 0; end--) {
+      if (arr[end] !== '') break;
+    }
+
+    if (start > end) return [];
+    return arr.slice(start, end - start + 1);
+  }
+
+  var fromParts = trim(from.split('/'));
+  var toParts = trim(to.split('/'));
+
+  var length = Math.min(fromParts.length, toParts.length);
+  var samePartsLength = length;
+  for (var i = 0; i < length; i++) {
+    if (fromParts[i] !== toParts[i]) {
+      samePartsLength = i;
+      break;
+    }
+  }
+
+  var outputParts = [];
+  for (var i = samePartsLength; i < fromParts.length; i++) {
+    outputParts.push('..');
+  }
+
+  outputParts = outputParts.concat(toParts.slice(samePartsLength));
+
+  return outputParts.join('/');
+};
+
+// https://github.com/joyent/node/blob/master/lib/path.js#L445
+function dirname(path) {
+  var result = splitPath(path),
+    root = result[0],
+    dir = result[1];
+
+  if (!root && !dir) {
+    // No dirname whatsoever
+    return '.';
+  }
+
+  if (dir) {
+    // It has a dirname, strip trailing slash
+    dir = dir.substr(0, dir.length - 1);
+  }
+
+  return root + dir;
+};
+
+// https://github.com/joyent/node/blob/master/lib/path.js#L464
+function basename(path, ext) {
+  var f = splitPath(path)[2];
+  // TODO: make this comparison case-insensitive on windows?
+  if (ext && f.substr(-1 * ext.length) === ext) {
+    f = f.substr(0, f.length - ext.length);
+  }
+  return f;
+};
