@@ -21,20 +21,30 @@ function readSeajsCacheToBody() {
 
 var width = 720;
 var height = 80;
+var ABSOLUTE_RE = /^\/\/.|:\//
 /* only do all this when document has finished loading (needed for RaphaelJS) */
 function render(data) {
   var g = new Graph();
   var cache = data.cache;
   var count = 0;
   Object.keys(cache).forEach(function(k) {
-    var dir = dirname(k);
-    var base = basename(k);
-    var s = relative(dir, data.base);
-    if(s) {
-      s += '/' + base;
+    var s = k;
+    if(ABSOLUTE_RE.test(s)) {
+      if(s.indexOf(data.base) == 0) {
+        s = './' + s.slice(data.base.length).replace(/^\//, '');
+        s = relative(dir, dirname(s));
+      }
     }
     else {
-      s = base;
+      var dir = dirname(k);
+      var base = basename(k);
+      var s = relative(dir, data.base);
+      if(s) {
+        s += '/' + base;
+      }
+      else {
+        s = base;
+      }
     }
     g.addNode(k, { label: s });
     count++;
