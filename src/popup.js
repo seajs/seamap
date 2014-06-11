@@ -29,6 +29,7 @@ function render(data) {
   var count = 0;
   Object.keys(cache).forEach(function(k) {
     var s = k;
+    var dir = dirname(k);
     if(ABSOLUTE_RE.test(s)) {
       if(s.indexOf(data.base) == 0) {
         s = './' + s.slice(data.base.length).replace(/^\//, '');
@@ -36,7 +37,6 @@ function render(data) {
       }
     }
     else {
-      var dir = dirname(k);
       var base = basename(k);
       var s = relative(dir, data.base);
       if(s) {
