@@ -66,6 +66,26 @@ function render(data) {
 readSeajsCacheToBody();
 $('button').click(readSeajsCacheToBody);
 
+$('.w input').change(function() {
+  var w = $(this).val();
+  w = parseInt(w);
+  if(isNaN(w)) {
+    w = 800;
+  }
+  w = Math.max(100, w);
+  $('#canvas').width(w);
+});
+
+$('.h input').change(function() {
+  var h = $(this).val();
+  h = parseInt(h);
+  if(isNaN(w)) {
+    w = 60;
+  }
+  w = Math.max(60, w);
+  $('#canvas').width(w);
+});
+
 
 // https://github.com/joyent/node/blob/master/lib/path.js#L310
 var splitPathRe =

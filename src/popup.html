@@ -11,11 +11,17 @@
     button:hover{opacity:1;}
     #base{position:fixed;left:12px;top:35px;font-size:11px;text-shadow:1px 1px 2px rgba(0, 0, 0, 0.2);opacity:0.5;}
     #base:hover{opacity:1;}
+    .w{position:fixed;left:12px;top:50px;}
+    .h{position:fixed;left:12px;top:70px;}
+    label span{display:inline-block;width:20px;font-size:10px;}
+    input[type=number]{display:inline-block;padding:0;font-size:10px;height:12px;width:50px;}
   </style>
 </head>
 <body>
 <div id="canvas"></div>
 <button>refresh</button>
+<label class="w"><span>w:</span><input type="number"/></label>
+<label class="h"><span>h:</span><input type="number"/></label>
 <div id="base"></div>
 <script type="text/javascript" src="js/raphael-min.js"></script>
 <script type="text/javascript" src="js/dracula_graffle.js"></script>
